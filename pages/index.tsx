@@ -1,23 +1,21 @@
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-import { Resetter, SetterOrUpdater, useRecoilState, useResetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { idolsState, numberState, songsState, parametersState } from '../const/atoms';
 import axios from 'axios';
 import { ChangeEvent } from 'react';
 import { endpoints, brands } from '../const/consts';
 import { Idol, Music } from '../types/types';
 
-const SelectProduction = (name: string, idx: number, productions: string[], onChange: Function): JSX.Element => {
+const SelectProduction = (name: string, idx: number): JSX.Element => {
+  const [productions, setProductions] = useRecoilState(parametersState);
   const onChangeSelection = (ev: ChangeEvent<HTMLInputElement>) => {
     const v = ev.target.value;
-    if (productions.includes(v)) {
-      onChange(productions.filter(p => p != v))
-    }
-    else {
-      onChange([...productions, v])
-    }
+    if (productions.includes(v)) { setProductions(productions.filter(p => p != v)) }
+    else { setProductions([...productions, v]) }
   }
+
   const isSelected = productions.includes(name);
 
   return (
@@ -28,14 +26,10 @@ const SelectProduction = (name: string, idx: number, productions: string[], onCh
   )
 }
 
-interface ParameterBoxProps {
-  val: string[];
-  setProduction: (s: string[]) => void;
-}
-
-const ParameterBox = ({ val, setProduction }: ParameterBoxProps): JSX.Element => {
-  const isSelectedAll = val.length == brands.length;
-  const toggleAllSelection = () => { setProduction(isSelectedAll ? [] : brands); };
+const ParameterBox = (): JSX.Element => {
+  const [productions, setProductions] = useRecoilState(parametersState);
+  const isSelectedAll = productions.length == brands.length;
+  const toggleAllSelection = () => { setProductions(isSelectedAll ? [] : brands); };
 
   return (
     <div>
@@ -43,19 +37,16 @@ const ParameterBox = ({ val, setProduction }: ParameterBoxProps): JSX.Element =>
         <input type="checkbox" id="ALL" name='all-production' value="ぜんぶ" checked={isSelectedAll} onChange={toggleAllSelection} />
         <label htmlFor="ALL">ぜんぶ</label>
       </div>
-      {brands.map((p, idx) => SelectProduction(p, idx, val, setProduction))}
+      {brands.map((p, idx) => SelectProduction(p, idx))}
     </div>
   )
 }
 
-interface QueryProps {
-  number: number;
-  brands: readonly string[];
-  setSongs: SetterOrUpdater<Music[]>;
-  setIdols: SetterOrUpdater<Idol[]>;
-}
-
-const Query = ({ setSongs, setIdols, number, brands }: QueryProps): JSX.Element => {
+const Query = (): JSX.Element => {
+  const number = useRecoilValue(numberState);
+  // TODO: setSongs と setIdols をマージするような何かを作れそう
+  const [, setSongs] = useRecoilState(songsState);
+  const [, setIdols] = useRecoilState(idolsState);
   const query = async () => {
     try {
       // TODO: 雑に2種類(Song,Idol)を並べているので整理する
@@ -86,12 +77,9 @@ const Query = ({ setSongs, setIdols, number, brands }: QueryProps): JSX.Element 
   )
 }
 
-interface ResultProps {
-  songs: Music[];
-  idols: Idol[];
-}
-
-const Result = ({ songs, idols }: ResultProps): JSX.Element => {
+const Result = (): JSX.Element => {
+  const songs = useRecoilValue(songsState);
+  const idols = useRecoilValue(idolsState);
   const s = {
     borderBottom: "solid thin black",
   }
@@ -136,7 +124,8 @@ const Result = ({ songs, idols }: ResultProps): JSX.Element => {
   )
 }
 
-const NumberParameters = ({ number, setNumber }: { number: number, setNumber: SetterOrUpdater<number> }): JSX.Element => {
+const NumberParameters = (): JSX.Element => {
+  const [number, setNumber] = useRecoilState(numberState);
   return (
     <input type="number" name="number" value={number} onChange={
       (event) => {
@@ -153,24 +142,18 @@ const NumberParameters = ({ number, setNumber }: { number: number, setNumber: Se
   )
 }
 
-const AllClear = ({ fns }: { fns: Resetter[] }): JSX.Element => {
-  const clear = () => { fns.forEach(f => f()); }
+const AllClear = (): JSX.Element => {
+  const resetNumber = useResetRecoilState(numberState);
+  const resetParameters = useResetRecoilState(parametersState);
+  const resetSongs = useResetRecoilState(songsState);
+  const resetIdols = useResetRecoilState(idolsState);
+  const clear = () => { [resetNumber, resetParameters, resetIdols, resetSongs].forEach(f => f()); }
   return (
     <button onClick={clear}>ぜんぶクリア</button>
   )
 }
 
 const Home: NextPage = () => {
-  const [songs, setSongs] = useRecoilState(songsState);
-  const [idols, setIdols] = useRecoilState(idolsState);
-  const [parameters, setParameters] = useRecoilState(parametersState);
-  const [number, setNumber] = useRecoilState(numberState);
-  const resets = [
-    useResetRecoilState(songsState),
-    useResetRecoilState(numberState),
-    useResetRecoilState(parametersState),
-  ];
-
   return (
     <div className={styles.container}>
       <Head>
@@ -180,12 +163,11 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <ParameterBox val={parameters} setProduction={setParameters} />
-        <NumberParameters setNumber={setNumber} number={number} />
-        {/* TODO: setSongs と setIdols をマージするような何かを作れそう */}
-        <Query number={number} brands={parameters} setSongs={setSongs} setIdols={setIdols} />
-        <AllClear fns={resets} />
-        <Result songs={songs} idols={idols} />
+        <ParameterBox />
+        <NumberParameters />
+        <Query />
+        <AllClear />
+        <Result />
       </main>
     </div>
   )
