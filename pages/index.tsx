@@ -45,7 +45,7 @@ const ParameterBox = ({ val, setProduction }: { val: string[], setProduction: (s
 const Query = ({ run, number, brands }: { number: number, brands: readonly string[], run: SetterOrUpdater<Music[]> }): JSX.Element => {
   const query = async () => {
     try {
-      const res = await axios.post('/api/music', { number, brands });
+      const res = await axios.post(endpoints.music, { number, brands });
       const data = res.data.payload as Music[];
       console.log(data);
       const titles = data.map((d) => d.name);
