@@ -17,8 +17,14 @@ export interface Music {
   release: string;
 }
 
-const scheme = 'https';
-const port: number = 80;
+// TODO: このあたり env から読み込む
+const SCHEME = 'https';
+const PORT: number = 80;
+const HOST = 'imas-random-list.deno.dev';
+
+const API_BASE = `${SCHEME}://${HOST}${PORT === 80 ? '' : `:${PORT}`}`;
+
 export const endpoints = {
-  music: `${scheme}://imas-random-list.deno.dev${port === 80 ? '' : `:${port}`}/music`,
+  music: `${API_BASE}/music`,
+  idol: `${API_BASE}/idol`,
 };
