@@ -14,6 +14,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-notifications": "^1.7.3",
+    "react-share": "^4.4.0",
     "recoil": "^0.5.2",
     "recoil-persist": "^4.0.0",
     "swr": "^1.1.2"

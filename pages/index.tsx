@@ -1,4 +1,4 @@
-import type { NextPage } from 'next'
+import { NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
@@ -7,6 +7,7 @@ import axios from 'axios';
 import { ChangeEvent } from 'react';
 import { endpoints, brands } from '../const/consts';
 import { Idol, Music } from '../types/types';
+import { TwitterShareButton, TwitterIcon } from 'react-share';
 
 const SelectProduction = (name: string, idx: number): JSX.Element => {
   const [productions, setProductions] = useRecoilState(parametersState);
@@ -124,6 +125,24 @@ const Result = (): JSX.Element => {
   )
 }
 
+const SnsShare = (): JSX.Element => {
+  const songs = useRecoilValue(songsState);
+  const hasSong = songs.length > 0;
+  const url = 'http://imas-random-list.deno.dev/';
+  const message = !hasSong ? '' : `今日の曲はこれ！\n${songs[0].name}\n\nChoosed by `;
+  return (
+    <TwitterShareButton disabled={!hasSong} url={url} title={message}>
+      <TwitterIcon round />
+    </TwitterShareButton>
+  )
+}
+
+const Footer = (): JSX.Element => {
+  return (
+    <div>See: <a href="https://imas-random-list.deno.dev/">https://imas-random-list.deno.dev/</a></div>
+  )
+}
+
 const NumberParameters = (): JSX.Element => {
   const [number, setNumber] = useRecoilState(numberState);
   return (
@@ -168,6 +187,8 @@ const Home: NextPage = () => {
         <Query />
         <AllClear />
         <Result />
+        <SnsShare />
+        <Footer />
       </main>
     </div>
   )
