@@ -2,10 +2,11 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import { Resetter, SetterOrUpdater, useRecoilState, useResetRecoilState } from "recoil";
-import { numberState, songsState, parametersState } from '../const/atoms';
+import { idolsState, numberState, songsState, parametersState } from '../const/atoms';
 import axios from 'axios';
 import { ChangeEvent } from 'react';
-import { endpoints, brands, Music } from '../const/consts';
+import { endpoints, brands } from '../const/consts';
+import { Idol, Music } from '../types/types';
 
 const SelectProduction = (name: string, idx: number, productions: string[], onChange: Function): JSX.Element => {
   const onChangeSelection = (ev: ChangeEvent<HTMLInputElement>) => {
@@ -27,7 +28,12 @@ const SelectProduction = (name: string, idx: number, productions: string[], onCh
   )
 }
 
-const ParameterBox = ({ val, setProduction }: { val: string[], setProduction: (s: string[]) => void }): JSX.Element => {
+interface ParameterBoxProps {
+  val: string[];
+  setProduction: (s: string[]) => void;
+}
+
+const ParameterBox = ({ val, setProduction }: ParameterBoxProps): JSX.Element => {
   const isSelectedAll = val.length == brands.length;
   const toggleAllSelection = () => { setProduction(isSelectedAll ? [] : brands); };
 
@@ -42,15 +48,30 @@ const ParameterBox = ({ val, setProduction }: { val: string[], setProduction: (s
   )
 }
 
-const Query = ({ run, number, brands }: { number: number, brands: readonly string[], run: SetterOrUpdater<Music[]> }): JSX.Element => {
+interface QueryProps {
+  number: number;
+  brands: readonly string[];
+  setSongs: SetterOrUpdater<Music[]>;
+  setIdols: SetterOrUpdater<Idol[]>;
+}
+
+const Query = ({ setSongs, setIdols, number, brands }: QueryProps): JSX.Element => {
   const query = async () => {
     try {
-      const res = await axios.post(endpoints.music, { number, brands });
-      const data = res.data.payload as Music[];
-      console.log(data);
-      const titles = data.map((d) => d.name);
-      console.log(titles);
-      run(data);
+      // TODO: 雑に2種類(Song,Idol)を並べているので整理する
+      const songRes = await axios.post(endpoints.music, { number, brands });
+      const songData = songRes.data.payload as Music[];
+      console.log(songData);
+      const songNames = songData.map((d) => d.name);
+      console.log(songNames);
+      setSongs(songData);
+
+      const idolRes = await axios.post(endpoints.idol, { number, brands });
+      const idolData = idolRes.data.payload as Idol[];
+      console.log(idolData);
+      const idolNames = idolData.map((d) => d.name);
+      console.log(idolNames);
+      setIdols(idolData);
     }
     catch (err) {
       console.log(err);
@@ -65,27 +86,53 @@ const Query = ({ run, number, brands }: { number: number, brands: readonly strin
   )
 }
 
-const Result = ({ songs }: { songs: Music[] }): JSX.Element => {
+interface ResultProps {
+  songs: Music[];
+  idols: Idol[];
+}
+
+const Result = ({ songs, idols }: ResultProps): JSX.Element => {
   const s = {
     borderBottom: "solid thin black",
   }
   return (
-    <table style={{ border: 'solid thin' }}>
-      <tr>
-        <th style={s}>#</th>
-        <th style={s}>ブランド</th>
-        <th style={s}>曲名</th>
-      </tr>
-      {songs.map((song, idx) => {
-        return (
-          <tr key={`table-${idx}-${song.name}`}>
-            <td style={s}>{idx}</td>
-            <td style={s}>{song.brand}</td>
-            <td style={s}>{song.name}</td>
-          </tr>
-        )
-      })}
-    </table>
+    <div>
+      <table style={{ border: 'solid thin' }}>
+        <tr>
+          <th style={s}>#</th>
+          <th style={s}>ブランド</th>
+          <th style={s}>曲名</th>
+        </tr>
+        {songs.map((song, idx) => {
+          return (
+            <tr key={`table-${idx}-${song.name}`}>
+              <td style={s}>{idx}</td>
+              <td style={s}>{song.brand}</td>
+              <td style={s}>{song.name}</td>
+            </tr>
+          )
+        })}
+      </table>
+      <table style={{ border: 'solid thin' }}>
+        <tr>
+          <th style={s}>#</th>
+          <th style={s}>ブランド</th>
+          <th style={s}>名前</th>
+          <th style={s}>アイドル名鑑</th>
+        </tr>
+        {idols.map((idol, idx) => {
+          const idolNumber = (url: string) => url.split('/').pop() ?? '';
+          return (
+            <tr key={`table-${idx}-${idol.name}`}>
+              <td style={s}>{idx}</td>
+              <td style={s}>{idol.brand}</td>
+              <td style={s}>{idol.name} (<a href={idol.url} target="_blank" rel="noopener noreferrer">アイドル名鑑</a>)</td>
+              <td style={s}><a href={idol.url} target="_blank" rel="noopener noreferrer">🕮{idolNumber(idol.url)}</a></td>
+            </tr>
+          )
+        })}
+      </table>
+    </div>
   )
 }
 
@@ -115,6 +162,7 @@ const AllClear = ({ fns }: { fns: Resetter[] }): JSX.Element => {
 
 const Home: NextPage = () => {
   const [songs, setSongs] = useRecoilState(songsState);
+  const [idols, setIdols] = useRecoilState(idolsState);
   const [parameters, setParameters] = useRecoilState(parametersState);
   const [number, setNumber] = useRecoilState(numberState);
   const resets = [
@@ -134,9 +182,10 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <ParameterBox val={parameters} setProduction={setParameters} />
         <NumberParameters setNumber={setNumber} number={number} />
-        <Query number={number} brands={parameters} run={setSongs} />
-        <Result songs={songs} />
+        {/* TODO: setSongs と setIdols をマージするような何かを作れそう */}
+        <Query number={number} brands={parameters} setSongs={setSongs} setIdols={setIdols} />
         <AllClear fns={resets} />
+        <Result songs={songs} idols={idols} />
       </main>
     </div>
   )

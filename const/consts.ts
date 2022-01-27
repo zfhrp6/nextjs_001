@@ -11,12 +11,6 @@ export const brands = [
   'Unknown',
 ].sort();
 
-export interface Music {
-  brand: string;
-  name: string;
-  release: string;
-}
-
 // TODO: このあたり env から読み込む
 const SCHEME = 'https';
 const PORT: number = 80;
