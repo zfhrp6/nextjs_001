@@ -1,15 +1,18 @@
+// NOTE: manually sorted (except Unknown)
 export const BRANDS = [
   '765AS',
-  'DearlyStars',
   'CinderellaGirls',
-  'MillionLive',
-  'SideM',
-  'ShinyColors',
-  'RADIO',
+  'DearlyStars',
   'KR',
+  'MillionLive',
+  'RADIO',
+  'ShinyColors',
+  'SideM',
   'XENOGLOSSIA',
   'Unknown',
-].sort();
+] as const;
+
+export const STRATEGIES = ['full-flat', 'brand-flat'] as const;
 
 // TODO: このあたり env から読み込む
 const SCHEME = 'https';
