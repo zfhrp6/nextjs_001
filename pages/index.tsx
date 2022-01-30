@@ -44,6 +44,7 @@ const ParameterBox = (): JSX.Element => {
 
 const Query = (): JSX.Element => {
   const number = useRecoilValue(numberState);
+  const brands = useRecoilValue(parametersState);
   // TODO: setSongs と setIdols をマージするような何かを作れそう
   const [, setSongs] = useRecoilState(songsState);
   const [, setIdols] = useRecoilState(idolsState);
