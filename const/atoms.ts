@@ -1,7 +1,7 @@
 import { atom } from "recoil";
 import { recoilPersist } from "recoil-persist";
 import { Idol, Music } from "../types/types";
-import { brands } from "./consts";
+import { BRANDS } from "./consts";
 
 const { persistAtom } = recoilPersist();
 
@@ -25,6 +25,6 @@ export const songsState = atom<Music[]>({
 
 export const parametersState = atom<string[]>({
 	key: 'parameters',
-	default: brands,
+	default: BRANDS,
 	effects_UNSTABLE: [persistAtom],
 });

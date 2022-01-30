@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { idolsState, numberState, songsState, parametersState } from '../const/atoms';
 import axios from 'axios';
 import { ChangeEvent } from 'react';
-import { endpoints, brands } from '../const/consts';
+import { ENDPOINTS, BRANDS } from '../const/consts';
 import { Idol, Music } from '../types/types';
 
 const SelectProduction = (name: string, idx: number): JSX.Element => {
@@ -28,8 +28,8 @@ const SelectProduction = (name: string, idx: number): JSX.Element => {
 
 const ParameterBox = (): JSX.Element => {
   const [productions, setProductions] = useRecoilState(parametersState);
-  const isSelectedAll = productions.length == brands.length;
-  const toggleAllSelection = () => { setProductions(isSelectedAll ? [] : brands); };
+  const isSelectedAll = productions.length == BRANDS.length;
+  const toggleAllSelection = () => { setProductions(isSelectedAll ? [] : BRANDS); };
 
   return (
     <div>
@@ -37,27 +37,28 @@ const ParameterBox = (): JSX.Element => {
         <input type="checkbox" id="ALL" name='all-production' value="ぜんぶ" checked={isSelectedAll} onChange={toggleAllSelection} />
         <label htmlFor="ALL">ぜんぶ</label>
       </div>
-      {brands.map((p, idx) => SelectProduction(p, idx))}
+      {BRANDS.map((p, idx) => SelectProduction(p, idx))}
     </div>
   )
 }
 
 const Query = (): JSX.Element => {
   const number = useRecoilValue(numberState);
+  const brands = useRecoilValue(parametersState);
   // TODO: setSongs と setIdols をマージするような何かを作れそう
   const [, setSongs] = useRecoilState(songsState);
   const [, setIdols] = useRecoilState(idolsState);
   const query = async () => {
     try {
       // TODO: 雑に2種類(Song,Idol)を並べているので整理する
-      const songRes = await axios.post(endpoints.music, { number, brands });
+      const songRes = await axios.post(ENDPOINTS.music, { number, brands });
       const songData = songRes.data.payload as Music[];
       console.log(songData);
       const songNames = songData.map((d) => d.name);
       console.log(songNames);
       setSongs(songData);
 
-      const idolRes = await axios.post(endpoints.idol, { number, brands });
+      const idolRes = await axios.post(ENDPOINTS.idol, { number, brands });
       const idolData = idolRes.data.payload as Idol[];
       console.log(idolData);
       const idolNames = idolData.map((d) => d.name);

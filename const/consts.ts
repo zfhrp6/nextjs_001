@@ -1,4 +1,4 @@
-export const brands = [
+export const BRANDS = [
   '765AS',
   'DearlyStars',
   'CinderellaGirls',
@@ -18,7 +18,7 @@ const HOST = 'imas-random-list.deno.dev';
 
 const API_BASE = `${SCHEME}://${HOST}${PORT === 80 ? '' : `:${PORT}`}`;
 
-export const endpoints = {
+export const ENDPOINTS = {
   music: `${API_BASE}/music`,
   idol: `${API_BASE}/idol`,
 };
