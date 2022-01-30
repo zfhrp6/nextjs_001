@@ -51,18 +51,21 @@ const Query = (): JSX.Element => {
   const query = async () => {
     try {
       // TODO: 雑に2種類(Song,Idol)を並べているので整理する
-      const songRes = await axios.post(ENDPOINTS.music, { number, brands });
-      const songData = songRes.data.payload as Music[];
+      const songRes = axios.post(ENDPOINTS.music, { number, brands });
+      const idolRes = axios.post(ENDPOINTS.idol, { number, brands });
+      Promise.all([songRes, idolRes]);
+     
+      const songData = (await songRes).data.payload as Music[];
       console.log(songData);
       const songNames = songData.map((d) => d.name);
       console.log(songNames);
-      setSongs(songData);
 
-      const idolRes = await axios.post(ENDPOINTS.idol, { number, brands });
-      const idolData = idolRes.data.payload as Idol[];
+      const idolData = (await idolRes).data.payload as Idol[];
       console.log(idolData);
       const idolNames = idolData.map((d) => d.name);
       console.log(idolNames);
+      
+      setSongs(songData);
       setIdols(idolData);
     }
     catch (err) {
