@@ -1,4 +1,4 @@
-import { BRANDS } from "../const/consts";
+import { BRANDS, STRATEGIES } from "../const/consts";
 
 export interface Music {
   brand: string;
@@ -13,3 +13,5 @@ export interface Idol {
 }
 
 export type Brand = typeof BRANDS[number];
+
+export type Strategy = typeof STRATEGIES[keyof typeof STRATEGIES];

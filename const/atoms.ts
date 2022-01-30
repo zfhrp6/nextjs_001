@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 import { recoilPersist } from "recoil-persist";
-import { Brand, Idol, Music } from "../types/types";
+import { Brand, Idol, Music, Strategy } from "../types/types";
 import { BRANDS } from "./consts";
 
 const { persistAtom } = recoilPersist();
@@ -11,20 +11,25 @@ export const idolsState = atom<Idol[]>({
 	effects_UNSTABLE: [persistAtom],
 })
 
-export const numberState = atom<number>({
-	key: 'number',
-	default: 5,
-	effects_UNSTABLE: [persistAtom],
-});
-
 export const songsState = atom<Music[]>({
 	key: 'songs',
 	default: [],
 	effects_UNSTABLE: [persistAtom],
 });
 
-export const parametersState = atom<Brand[]>({
+export interface Parameters {
+  brands: Brand[];
+  strategy: Strategy;
+  number: number;
+}
+
+export const parametersState = atom<Parameters>({
 	key: 'parameters',
   // identically mapping for type check
-	default: BRANDS.map(b => b),
+	default: {
+    brands: BRANDS.map(b => b),
+    strategy:  'brand-flat',
+    number: 5,
+  },
+	effects_UNSTABLE: [persistAtom],
 });

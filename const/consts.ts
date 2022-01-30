@@ -12,6 +12,8 @@ export const BRANDS = [
   'Unknown',
 ] as const;
 
+export const STRATEGIES = ['full-flat', 'brand-flat'] as const;
+
 // TODO: このあたり env から読み込む
 const SCHEME = 'https';
 const PORT: number = 80;
