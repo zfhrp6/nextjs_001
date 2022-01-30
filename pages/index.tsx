@@ -6,22 +6,22 @@ import { idolsState, numberState, songsState, parametersState } from '../const/a
 import axios from 'axios';
 import { ChangeEvent } from 'react';
 import { ENDPOINTS, BRANDS } from '../const/consts';
-import { Idol, Music } from '../types/types';
+import { Brand, Idol, Music } from '../types/types';
 
-const SelectProduction = (name: string, idx: number): JSX.Element => {
+const SelectProduction = (brand: Brand, idx: number): JSX.Element => {
   const [productions, setProductions] = useRecoilState(parametersState);
   const onChangeSelection = (ev: ChangeEvent<HTMLInputElement>) => {
-    const v = ev.target.value;
+    const v = ev.target.value as Brand;
     if (productions.includes(v)) { setProductions(productions.filter(p => p != v)) }
     else { setProductions([...productions, v]) }
   }
 
-  const isSelected = productions.includes(name);
+  const isSelected = productions.includes(brand);
 
   return (
     <div key={idx}>
-      <input type="checkbox" id={name} name='production' value={name} checked={isSelected} onChange={onChangeSelection} />
-      <label htmlFor={name}>{name}</label>
+      <input type="checkbox" id={brand} name='production' value={brand} checked={isSelected} onChange={onChangeSelection} />
+      <label htmlFor={brand}>{brand}</label>
     </div>
   )
 }
@@ -29,7 +29,9 @@ const SelectProduction = (name: string, idx: number): JSX.Element => {
 const ParameterBox = (): JSX.Element => {
   const [productions, setProductions] = useRecoilState(parametersState);
   const isSelectedAll = productions.length == BRANDS.length;
-  const toggleAllSelection = () => { setProductions(isSelectedAll ? [] : BRANDS); };
+  const toggleAllSelection = () => {
+    setProductions(isSelectedAll ? [] : BRANDS as unknown as Brand[]);
+  };
 
   return (
     <div>
@@ -54,7 +56,7 @@ const Query = (): JSX.Element => {
       const songRes = axios.post(ENDPOINTS.music, { number, brands });
       const idolRes = axios.post(ENDPOINTS.idol, { number, brands });
       Promise.all([songRes, idolRes]);
-     
+
       const songData = (await songRes).data.payload as Music[];
       console.log(songData);
       const songNames = songData.map((d) => d.name);
@@ -64,7 +66,7 @@ const Query = (): JSX.Element => {
       console.log(idolData);
       const idolNames = idolData.map((d) => d.name);
       console.log(idolNames);
-      
+
       setSongs(songData);
       setIdols(idolData);
     }

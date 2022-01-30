@@ -1,3 +1,5 @@
+import { BRANDS } from "../const/consts";
+
 export interface Music {
   brand: string;
   name: string;
@@ -9,3 +11,5 @@ export interface Idol {
   name: string;
   url: string;
 }
+
+export type Brand = typeof BRANDS[number];
