@@ -1,10 +1,11 @@
+import CSS from 'csstype';
+import axios from 'axios';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
+import { idolsState, songsState, parametersState } from '../const/atoms';
+import { ChangeEvent } from 'react';
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
-import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
-import { idolsState, songsState, parametersState } from '../const/atoms';
-import axios from 'axios';
-import { ChangeEvent } from 'react';
 import { ENDPOINTS, BRANDS, STRATEGIES } from '../const/consts';
 import { Brand, Idol, Music, Strategy } from '../types/types';
 
@@ -24,7 +25,7 @@ const SelectProduction = (brand: Brand, idx: number): JSX.Element => {
 
   return (
     <div key={idx}>
-      <input type="checkbox" id={brand} name='production' value={brand} checked={isSelected} onChange={onChangeBrands} />
+      <input type='checkbox' id={brand} name='production' value={brand} checked={isSelected} onChange={onChangeBrands} />
       <label htmlFor={brand}>{brand}</label>
     </div>
   )
@@ -45,7 +46,7 @@ const SelectStrategy = (strategy: Strategy, idx: number): JSX.Element => {
 
   return (
     <div key={idx}>
-      <input type="radio" id={strategyString} name='production' value={strategyString} checked={isSelected} onChange={onChangeStrategy} />
+      <input type='radio' id={strategyString} name='production' value={strategyString} checked={isSelected} onChange={onChangeStrategy} />
       <label htmlFor={strategyString}>{strategy}</label>
     </div>
   )
@@ -66,8 +67,8 @@ const ParameterBox = (): JSX.Element => {
     <div>
       <div>
         <div>
-          <input type="checkbox" id="ALL" name='all-production' value="ぜんぶ" checked={isSelectedAll} onChange={toggleAllSelection} />
-          <label htmlFor="ALL">ぜんぶ</label>
+          <input type='checkbox' id='ALL' name='all-production' value='ぜんぶ' checked={isSelectedAll} onChange={toggleAllSelection} />
+          <label htmlFor='ALL'>ぜんぶ</label>
         </div>
         {BRANDS.map((p, idx) => SelectProduction(p, idx))}
       </div>
@@ -103,7 +104,7 @@ const Query = (): JSX.Element => {
     }
     catch (err) {
       console.log(err);
-      alert("バグです");
+      alert('バグです');
     }
   }
 
@@ -117,42 +118,60 @@ const Query = (): JSX.Element => {
 const Result = (): JSX.Element => {
   const songs = useRecoilValue(songsState);
   const idols = useRecoilValue(idolsState);
-  const s = {
-    borderBottom: "solid thin black",
+  const tableBorderStyle: CSS.Properties = {
+    borderBottom: 'solid thin black',
+  }
+  const brandColStyle: CSS.Properties = {
+    ...tableBorderStyle,
+    minWidth: '115px',
+    textAlign: 'center',
+  }
+  const songColStyle: CSS.Properties = {
+    ...tableBorderStyle,
+    minWidth: '490px',
+  }
+  const idolNameColStyle: CSS.Properties = {
+    ...tableBorderStyle,
+    minWidth: '100px',
+
+  }
+  const meikanColStyle: CSS.Properties = {
+    ...tableBorderStyle,
+    textAlign: 'center',
   }
   return (
     <div>
       <table style={{ border: 'solid thin' }}>
         <tr>
-          <th style={s}>#</th>
-          <th style={s}>ブランド</th>
-          <th style={s}>曲名</th>
+          <th style={tableBorderStyle}>#</th>
+          <th style={tableBorderStyle}>ブランド</th>
+          <th style={tableBorderStyle}>曲名</th>
         </tr>
         {songs.map((song, idx) => {
           return (
             <tr key={`table-${idx}-${song.name}`}>
-              <td style={s}>{idx}</td>
-              <td style={s}>{song.brand}</td>
-              <td style={s}>{song.name}</td>
+              <td style={tableBorderStyle}>{idx}</td>
+              <td style={brandColStyle}>{song.brand}</td>
+              <td style={songColStyle}>{song.name}</td>
             </tr>
           )
         })}
       </table>
       <table style={{ border: 'solid thin' }}>
         <tr>
-          <th style={s}>#</th>
-          <th style={s}>ブランド</th>
-          <th style={s}>名前</th>
-          <th style={s}>アイドル名鑑</th>
+          <th style={tableBorderStyle}>#</th>
+          <th style={tableBorderStyle}>ブランド</th>
+          <th style={tableBorderStyle}>名前</th>
+          <th style={tableBorderStyle}>アイドル名鑑(Link)</th>
         </tr>
         {idols.map((idol, idx) => {
           const idolNumber = (url: string) => url.split('/').pop() ?? '';
           return (
             <tr key={`table-${idx}-${idol.name}`}>
-              <td style={s}>{idx}</td>
-              <td style={s}>{idol.brand}</td>
-              <td style={s}>{idol.name} (<a href={idol.url} target="_blank" rel="noopener noreferrer">アイドル名鑑</a>)</td>
-              <td style={s}><a href={idol.url} target="_blank" rel="noopener noreferrer">🕮{idolNumber(idol.url)}</a></td>
+              <td style={tableBorderStyle}>{idx}</td>
+              <td style={brandColStyle}>{idol.brand}</td>
+              <td style={idolNameColStyle}>{idol.name}</td>
+              <td style={meikanColStyle}><a href={idol.url} target='_blank' rel='noopener noreferrer'>🕮{idolNumber(idol.url)}</a></td>
             </tr>
           )
         })}
@@ -164,7 +183,7 @@ const Result = (): JSX.Element => {
 const NumberParameters = (): JSX.Element => {
   const [parameters, setParameters] = useRecoilState(parametersState);
   return (
-    <input type="number" name="number" value={parameters.number} onChange={
+    <input type='number' name='number' value={parameters.number} onChange={
       (event) => {
         try {
           const a = event.target.valueAsNumber;
@@ -194,8 +213,8 @@ const Home: NextPage = () => {
     <div className={styles.container}>
       <Head>
         <title>imas random list</title>
-        <meta name="description" content="see https://imas-random-list.deno.dev" />
-        <link rel="icon" href="/favicon.ico" />
+        <meta name='description' content='see https://imas-random-list.deno.dev' />
+        <link rel='icon' href='/favicon.ico' />
       </Head>
 
       <main className={styles.main}>
