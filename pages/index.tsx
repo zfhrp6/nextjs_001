@@ -50,7 +50,6 @@ const SelectStrategy = (strategy: Strategy, idx: number): JSX.Element => {
       <label htmlFor={strategyString}>{strategy}</label>
     </div>
   )
-
 }
 
 const ParameterBox = (): JSX.Element => {
@@ -90,12 +89,10 @@ const Query = (): JSX.Element => {
       Promise.all([songRes, idolRes]);
 
       const songData = (await songRes).data.payload as Music[];
-      console.log(songData);
       const songNames = songData.map((d) => d.name);
       console.log(songNames);
 
       const idolData = (await idolRes).data.payload as Idol[];
-      console.log(idolData);
       const idolNames = idolData.map((d) => d.name);
       console.log(idolNames);
 
@@ -128,12 +125,11 @@ const Result = (): JSX.Element => {
   }
   const songColStyle: CSS.Properties = {
     ...tableBorderStyle,
-    minWidth: '490px',
+    width: '350px',
   }
   const idolNameColStyle: CSS.Properties = {
     ...tableBorderStyle,
     minWidth: '100px',
-
   }
   const meikanColStyle: CSS.Properties = {
     ...tableBorderStyle,
@@ -182,19 +178,18 @@ const Result = (): JSX.Element => {
 
 const NumberParameters = (): JSX.Element => {
   const [parameters, setParameters] = useRecoilState(parametersState);
+  const handler = (ev: ChangeEvent<HTMLInputElement>) => {
+    try {
+      const a = ev.target.valueAsNumber;
+      setParameters({
+        ...parameters,
+        number: a <= 0 ? 0 : a,
+      });
+    }
+    catch (err) { }
+  }
   return (
-    <input type='number' name='number' value={parameters.number} onChange={
-      (event) => {
-        try {
-          const a = event.target.valueAsNumber;
-          setParameters({
-            ...parameters,
-            number: a <= 0 ? 0 : a,
-          });
-        }
-        catch (err) { }
-      }
-    }></input>
+    <input type='number' name='number' value={parameters.number} onChange={handler}></input>
   )
 }
 
