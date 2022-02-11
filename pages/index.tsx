@@ -1,6 +1,6 @@
 import CSS from 'csstype';
 import axios from 'axios';
-import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import { idolsState, songsState, parametersState } from '../const/atoms';
 import { ChangeEvent } from 'react';
 import type { NextPage } from 'next'
@@ -79,8 +79,8 @@ const ParameterBox = (): JSX.Element => {
 const Query = (): JSX.Element => {
   const parameters = useRecoilValue(parametersState);
   // TODO: setSongs と setIdols をマージするような何かを作れそう
-  const [, setSongs] = useRecoilState(songsState);
-  const [, setIdols] = useRecoilState(idolsState);
+  const setSongs = useSetRecoilState(songsState);
+  const setIdols = useSetRecoilState(idolsState);
   const query = async () => {
     try {
       // TODO: 雑に2種類(Song,Idol)を並べているので整理する
