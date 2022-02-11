@@ -1,5 +1,3 @@
-import { BRANDS, STRATEGIES } from "../const/consts";
-
 export interface Music {
   brand: string;
   name: string;
@@ -12,6 +10,23 @@ export interface Idol {
   url: string;
 }
 
-export type Brand = typeof BRANDS[number];
+// NOTE: manually sorted (except Unknown)
+export const Brand = [
+  '765AS',
+  'CinderellaGirls',
+  'DearlyStars',
+  'KR',
+  'MillionLive',
+  'RADIO',
+  'ShinyColors',
+  'SideM',
+  'XENOGLOSSIA',
+  'Unknown',
+] as const;
+export type Brand = typeof Brand[number];
 
-export type Strategy = typeof STRATEGIES[keyof typeof STRATEGIES];
+export const Strategy = {
+  full_flat: 'full-flat',
+  brand_flat: 'brand-flat',
+} as const;
+export type Strategy = typeof Strategy[keyof typeof Strategy];

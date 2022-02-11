@@ -1,16 +1,3 @@
-// NOTE: manually sorted (except Unknown)
-export const BRANDS = [
-  '765AS',
-  'CinderellaGirls',
-  'DearlyStars',
-  'KR',
-  'MillionLive',
-  'RADIO',
-  'ShinyColors',
-  'SideM',
-  'XENOGLOSSIA',
-  'Unknown',
-] as const;
 
 export const STRATEGIES = ['full-flat', 'brand-flat'] as const;
 
