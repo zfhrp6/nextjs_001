@@ -4,9 +4,10 @@ import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState 
 import { ChangeEvent } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import ReactTooltip from 'react-tooltip';
 import { idolsState, songsState, parametersState } from '../const/atoms';
 import styles from '../styles/Home.module.css';
-import { ENDPOINTS, BRANDS, STRATEGIES } from '../const/consts';
+import { ENDPOINTS } from '../const/consts';
 import { Brand, Idol, Music, Strategy } from '../types/types';
 
 const SelectProduction = (brand: Brand, idx: number): JSX.Element => {
@@ -30,10 +31,9 @@ const SelectProduction = (brand: Brand, idx: number): JSX.Element => {
   );
 };
 
-const SelectStrategy = (strategy: Strategy, idx: number): JSX.Element => {
+const SelectStrategy = (): JSX.Element => {
   const [parameters, setParameters] = useRecoilState(parametersState);
-  const isSelected = parameters.strategy === strategy;
-  const strategyString = strategy as string;
+  const isSelected = (strategy: Strategy) => parameters.strategy === strategy;
 
   const onChangeStrategy = (ev: ChangeEvent<HTMLInputElement>) => {
     const v = ev.target.value as Strategy;
@@ -44,34 +44,81 @@ const SelectStrategy = (strategy: Strategy, idx: number): JSX.Element => {
   };
 
   return (
-    <div key={idx}>
-      <input type='radio' id={strategyString} name='production' value={strategyString} checked={isSelected} onChange={onChangeStrategy} />
-      <label htmlFor={strategyString}>{strategy}</label>
+    <div>
+      <fieldset style={{ border: 'none' }}>
+        <legend>選択戦略</legend>
+        <div data-tip data-for={Strategy.full_flat}>
+          <label htmlFor={`${Strategy.full_flat}-strategy`}>
+            <input
+              type='radio'
+              id={`${Strategy.full_flat}-strategy`}
+              name='strategy'
+              value={Strategy.full_flat}
+              checked={isSelected(Strategy.full_flat)}
+              onChange={onChangeStrategy}
+            />
+            {Strategy.full_flat}
+          </label>
+        </div>
+        <ReactTooltip id={Strategy.full_flat} place='right' type='info' effect='solid'>
+          <span>全ての候補の中からランダムに選択します</span>
+        </ReactTooltip>
+        <div data-tip data-for={Strategy.brand_flat}>
+          <label htmlFor={`${Strategy.brand_flat}-strategy`}>
+            <input
+              type='radio'
+              id={`${Strategy.brand_flat}-strategy`}
+              name='strategy'
+              value={Strategy.brand_flat}
+              checked={isSelected(Strategy.brand_flat)}
+              onChange={onChangeStrategy}
+            />
+            {Strategy.brand_flat}
+          </label>
+        </div>
+        <ReactTooltip id={Strategy.brand_flat} place='right' type='info' effect='solid'>
+          <span>各ブランドを均等に選択します</span>
+        </ReactTooltip>
+      </fieldset>
     </div>
   );
 };
 
 const ParameterBox = (): JSX.Element => {
   const [parameters, setParameters] = useRecoilState(parametersState);
-  const isSelectedAll = parameters.brands?.length === BRANDS.length;
+  const isSelectedAll = parameters.brands?.length === Brand.length;
   const toggleAllSelection = () => {
     setParameters({
       ...parameters,
-      brands: isSelectedAll ? [] : BRANDS as unknown as Brand[],
+      brands: isSelectedAll ? [] : Brand as unknown as Brand[],
     });
   };
+  const parametersStyle: CSS.Properties = { display: 'flex' };
 
   return (
-    <div>
+    <div style={parametersStyle}>
       <div>
-        <div>
-          <input type='checkbox' id='ALL' name='all-production' value='ぜんぶ' checked={isSelectedAll} onChange={toggleAllSelection} />
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-          <label htmlFor='ALL'>ぜんぶ</label>
-        </div>
-        {BRANDS.map((p, idx) => SelectProduction(p, idx))}
+        <fieldset style={{ border: 'none' }}>
+          <legend>ブランド選択</legend>
+          <div>
+            <label htmlFor='ALL'>
+              <input
+                type='checkbox'
+                id='ALL'
+                name='all-production'
+                value='ぜんぶ'
+                checked={isSelectedAll}
+                onChange={toggleAllSelection}
+              />
+              ぜんぶ
+            </label>
+          </div>
+          {Brand.map((p, idx) => SelectProduction(p, idx))}
+        </fieldset>
       </div>
-      {STRATEGIES.map((s, idx) => SelectStrategy(s, idx))}
+      <div>
+        <SelectStrategy />
+      </div>
     </div>
   );
 };
@@ -84,16 +131,16 @@ const Query = (): JSX.Element => {
   const query = async () => {
     try {
       // TODO: 雑に2種類(Song,Idol)を並べているので整理する
-      const songRes = axios.post(ENDPOINTS.music, parameters);
-      const idolRes = axios.post(ENDPOINTS.idol, parameters);
+      const [songRes, idolRes] = [ENDPOINTS.music, ENDPOINTS.idol]
+        .map((e) => axios.post(e, parameters));
       Promise.all([songRes, idolRes]);
 
       const songData = (await songRes).data.payload as Music[];
-      const songNames = songData.map((d) => d.name);
-      console.log(songNames);
-
       const idolData = (await idolRes).data.payload as Idol[];
+
+      const songNames = songData.map((d) => d.name);
       const idolNames = idolData.map((d) => d.name);
+      console.log(songNames);
       console.log(idolNames);
 
       setSongs(songData);
@@ -115,6 +162,7 @@ const Result = (): JSX.Element => {
   const songs = useRecoilValue(songsState);
   const idols = useRecoilValue(idolsState);
   const tableBorderStyle: CSS.Properties = { borderBottom: 'solid thin black' };
+  const itemRowStyle: CSS.Properties = { height: '30px' };
   const brandColStyle: CSS.Properties = {
     ...tableBorderStyle,
     minWidth: '115px',
@@ -122,7 +170,7 @@ const Result = (): JSX.Element => {
   };
   const songColStyle: CSS.Properties = {
     ...tableBorderStyle,
-    width: '350px',
+    minWidth: '350px',
   };
   const idolNameColStyle: CSS.Properties = {
     ...tableBorderStyle,
@@ -142,7 +190,7 @@ const Result = (): JSX.Element => {
         </tr>
         {songs.map((song, idx) => (
           // eslint-disable-next-line react/no-array-index-key
-          <tr key={`table-${idx}-${song.name}`}>
+          <tr style={itemRowStyle} key={`table-${idx}-${song.name}`}>
             <td style={tableBorderStyle}>{idx}</td>
             <td style={brandColStyle}>{song.brand}</td>
             <td style={songColStyle}>{song.name}</td>
@@ -160,7 +208,7 @@ const Result = (): JSX.Element => {
           const idolNumber = (url: string) => url.split('/').pop() ?? '';
           return (
             // eslint-disable-next-line react/no-array-index-key
-            <tr key={`table-${idx}-${idol.name}`}>
+            <tr style={itemRowStyle} key={`table-${idx}-${idol.name}`}>
               <td style={tableBorderStyle}>{idx}</td>
               <td style={brandColStyle}>{idol.brand}</td>
               <td style={idolNameColStyle}>{idol.name}</td>
@@ -182,16 +230,22 @@ const NumberParameters = (): JSX.Element => {
   const [parameters, setParameters] = useRecoilState(parametersState);
   const handler = (ev: ChangeEvent<HTMLInputElement>) => {
     try {
-      const a = ev.target.valueAsNumber;
-      setParameters({
-        ...parameters,
-        number: a <= 0 ? 0 : a,
-      });
+      let a = ev.target.valueAsNumber;
+      a = Number.isNaN(a) ? parameters.number : a;
+      a = a <= 0 ? 0 : a;
+      setParameters({ ...parameters, number: a });
     } catch (err) {
       console.log(err);
     }
   };
-  return <input type='number' name='number' value={parameters.number} onChange={handler} />;
+  return (
+    <div>
+      <label htmlFor='number'>
+        検索数&nbsp;&nbsp;
+        <input id='number' type='number' name='number' value={parameters.number} onChange={handler} />
+      </label>
+    </div>
+  );
 };
 
 const AllClear = (): JSX.Element => {
