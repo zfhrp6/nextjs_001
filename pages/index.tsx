@@ -9,6 +9,7 @@ import { idolsState, songsState, parametersState } from '../const/atoms';
 import styles from '../styles/Home.module.css';
 import { ENDPOINTS } from '../const/consts';
 import { Brand, Idol, Music, Strategy } from '../types/types';
+import { brandColor } from '../utils/util';
 
 const SelectProduction = (brand: Brand, idx: number): JSX.Element => {
   const [parameters, setParameters] = useRecoilState(parametersState);
@@ -190,7 +191,7 @@ const Result = (): JSX.Element => {
         </tr>
         {songs.map((song, idx) => (
           // eslint-disable-next-line react/no-array-index-key
-          <tr style={itemRowStyle} key={`table-${idx}-${song.name}`}>
+          <tr style={{ ...itemRowStyle, backgroundColor: brandColor(song.brand as Brand) }} key={`table-${idx}-${song.name}`}>
             <td style={tableBorderStyle}>{idx}</td>
             <td style={brandColStyle}>{song.brand}</td>
             <td style={songColStyle}>{song.name}</td>
@@ -208,7 +209,7 @@ const Result = (): JSX.Element => {
           const idolNumber = (url: string) => url.split('/').pop() ?? '';
           return (
             // eslint-disable-next-line react/no-array-index-key
-            <tr style={itemRowStyle} key={`table-${idx}-${idol.name}`}>
+            <tr style={{ ...itemRowStyle, backgroundColor: brandColor(idol.brand as Brand) }} key={`table-${idx}-${idol.name}`}>
               <td style={tableBorderStyle}>{idx}</td>
               <td style={brandColStyle}>{idol.brand}</td>
               <td style={idolNameColStyle}>{idol.name}</td>
