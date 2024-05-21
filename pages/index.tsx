@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState 
 import { ChangeEvent } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip } from 'react-tooltip';
 import { idolsState, songsState, parametersState } from '../const/atoms';
 import styles from '../styles/Home.module.css';
 import { ENDPOINTS } from '../const/consts';
@@ -61,9 +61,9 @@ const SelectStrategy = (): JSX.Element => {
             {Strategy.full_flat}
           </label>
         </div>
-        <ReactTooltip id={Strategy.full_flat} place='right' type='info' effect='solid'>
+        <Tooltip id={Strategy.full_flat} data-tooltip-place='right' data-tooltip-variant='info'>
           <span>全ての候補の中からランダムに選択します</span>
-        </ReactTooltip>
+        </Tooltip>
         <div data-tip data-for={Strategy.brand_flat}>
           <label htmlFor={`${Strategy.brand_flat}-strategy`}>
             <input
@@ -77,9 +77,9 @@ const SelectStrategy = (): JSX.Element => {
             {Strategy.brand_flat}
           </label>
         </div>
-        <ReactTooltip id={Strategy.brand_flat} place='right' type='info' effect='solid'>
+        <Tooltip id={Strategy.brand_flat} data-tooltip-place='right' data-tooltip-variant='info'>
           <span>各ブランドを均等に選択します</span>
-        </ReactTooltip>
+        </Tooltip>
       </fieldset>
     </div>
   );
