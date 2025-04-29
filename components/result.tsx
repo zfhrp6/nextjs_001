@@ -4,7 +4,7 @@ import { songsState, idolsState } from '../const/atoms';
 import { Brand } from '../types/types';
 import { brandColor } from '../utils/util';
 
-const Result = (): JSX.Element => {
+const Result = (): React.JSX.Element => {
   const songs = useAtomValue(songsState);
   const idols = useAtomValue(idolsState);
   const tableBorderStyle: CSS.Properties = { borderBottom: 'solid thin black' };
@@ -29,44 +29,52 @@ const Result = (): JSX.Element => {
   return (
     <div>
       <table style={{ border: 'solid thin' }}>
-        <tr>
-          <th style={tableBorderStyle}>#</th>
-          <th style={tableBorderStyle}>ブランド</th>
-          <th style={tableBorderStyle}>曲名</th>
-        </tr>
-        {songs.map((song, idx) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <tr style={{ ...itemRowStyle, backgroundColor: brandColor(song.brand as Brand) }} key={`table-${idx}-${song.name}`}>
-            <td style={tableBorderStyle}>{idx}</td>
-            <td style={brandColStyle}>{song.brand}</td>
-            <td style={songColStyle}>{song.name}</td>
+        <thead>
+          <tr>
+            <th style={tableBorderStyle}>#</th>
+            <th style={tableBorderStyle}>ブランド</th>
+            <th style={tableBorderStyle}>曲名</th>
           </tr>
-        ))}
+        </thead>
+        <tbody>
+          {songs.map((song, idx) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <tr style={{ ...itemRowStyle, backgroundColor: brandColor(song.brand as Brand) }} key={`table-${idx}-${song.name}`}>
+              <td style={tableBorderStyle}>{idx}</td>
+              <td style={brandColStyle}>{song.brand}</td>
+              <td style={songColStyle}>{song.name}</td>
+            </tr>
+          ))}
+        </tbody>
       </table>
       <table style={{ border: 'solid thin' }}>
-        <tr>
-          <th style={tableBorderStyle}>#</th>
-          <th style={tableBorderStyle}>ブランド</th>
-          <th style={tableBorderStyle}>名前</th>
-          <th style={tableBorderStyle}>アイドル名鑑(Link)</th>
-        </tr>
-        {idols.map((idol, idx) => {
-          const idolNumber = (url: string) => url.split('/').pop() ?? '';
-          return (
-            // eslint-disable-next-line react/no-array-index-key
-            <tr style={{ ...itemRowStyle, backgroundColor: brandColor(idol.brand as Brand) }} key={`table-${idx}-${idol.name}`}>
-              <td style={tableBorderStyle}>{idx}</td>
-              <td style={brandColStyle}>{idol.brand}</td>
-              <td style={idolNameColStyle}>{idol.name}</td>
-              <td style={meikanColStyle}>
-                <a href={idol.url} target='_blank' rel='noopener noreferrer'>
-                  🕮
-                  {idolNumber(idol.url)}
-                </a>
-              </td>
-            </tr>
-          );
-        })}
+        <thead>
+          <tr>
+            <th style={tableBorderStyle}>#</th>
+            <th style={tableBorderStyle}>ブランド</th>
+            <th style={tableBorderStyle}>名前</th>
+            <th style={tableBorderStyle}>アイドル名鑑(Link)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {idols.map((idol, idx) => {
+            const idolNumber = (url: string) => url.split('/').pop() ?? '';
+            return (
+              // eslint-disable-next-line react/no-array-index-key
+              <tr style={{ ...itemRowStyle, backgroundColor: brandColor(idol.brand as Brand) }} key={`table-${idx}-${idol.name}`}>
+                <td style={tableBorderStyle}>{idx}</td>
+                <td style={brandColStyle}>{idol.brand}</td>
+                <td style={idolNameColStyle}>{idol.name}</td>
+                <td style={meikanColStyle}>
+                  <a href={idol.url} target='_blank' rel='noopener noreferrer'>
+                    🕮
+                    {idolNumber(idol.url)}
+                  </a>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
       </table>
     </div>
   );

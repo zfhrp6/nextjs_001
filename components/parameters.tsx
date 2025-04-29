@@ -5,7 +5,7 @@ import { useAtom, useSetAtom } from 'jotai';
 import { defaultParametersState, idolsState, parametersState, songsState } from '../const/atoms';
 import { Brand, Strategy } from '../types/types';
 
-export const SelectStrategy = (): JSX.Element => {
+export const SelectStrategy = (): React.JSX.Element => {
   const [parameters, setParameters] = useAtom(parametersState);
   const isSelected = (strategy: Strategy) => parameters.strategy === strategy;
 
@@ -58,7 +58,7 @@ export const SelectStrategy = (): JSX.Element => {
   );
 };
 
-export const SelectProduction = (brand: Brand, idx: number): JSX.Element => {
+export const SelectProduction = (brand: Brand, idx: number): React.JSX.Element => {
   const [parameters, setParameters] = useAtom(parametersState);
   const onChangeBrands = (ev: ChangeEvent<HTMLInputElement>) => {
     const v = ev.target.value as Brand;
@@ -79,7 +79,7 @@ export const SelectProduction = (brand: Brand, idx: number): JSX.Element => {
   );
 };
 
-export const ParameterBox = (): JSX.Element => {
+export const ParameterBox = (): React.JSX.Element => {
   const [parameters, setParameters] = useAtom(parametersState);
   const isSelectedAll = parameters.brands?.length === Brand.length;
   const toggleAllSelection = () => {
@@ -118,7 +118,7 @@ export const ParameterBox = (): JSX.Element => {
   );
 };
 
-export const NumberParameters = (): JSX.Element => {
+export const NumberParameters = (): React.JSX.Element => {
   const [parameters, setParameters] = useAtom(parametersState);
   const handler = (ev: ChangeEvent<HTMLInputElement>) => {
     try {
@@ -140,7 +140,7 @@ export const NumberParameters = (): JSX.Element => {
   );
 };
 
-export const AllClear = (): JSX.Element => {
+export const AllClear = (): React.JSX.Element => {
   const setParameters = useSetAtom(parametersState);
   const setSongs = useSetAtom(songsState);
   const setIdols = useSetAtom(idolsState);

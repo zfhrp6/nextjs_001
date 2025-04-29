@@ -2,7 +2,7 @@ import { IdolQuery, SongQuery } from './query';
 import { AllClear, NumberParameters, ParameterBox } from './parameters';
 import Result from './result';
 
-export const MainPc = (): JSX.Element => (
+export const MainPc = (): React.JSX.Element => (
   <>
     <ParameterBox />
     <NumberParameters />
@@ -13,7 +13,7 @@ export const MainPc = (): JSX.Element => (
   </>
 );
 
-export const MainSp = (): JSX.Element => (
+export const MainSp = (): React.JSX.Element => (
   <>
     <ParameterBox />
     <NumberParameters />
