@@ -4,7 +4,7 @@ import { idolsState, parametersState, songsState } from '../const/atoms';
 import { ENDPOINTS } from '../const/consts';
 import { Music, Idol } from '../types/types';
 
-export const SongQuery = (): JSX.Element => {
+export const SongQuery = (): React.JSX.Element => {
   const parameters = useAtomValue(parametersState);
   const setSongs = useSetAtom(songsState);
   const query = async () => {
@@ -30,7 +30,7 @@ export const SongQuery = (): JSX.Element => {
   );
 };
 
-export const IdolQuery = (): JSX.Element => {
+export const IdolQuery = (): React.JSX.Element => {
   const parameters = useAtomValue(parametersState);
   const setIdols = useSetAtom(idolsState);
   const query = async () => {
