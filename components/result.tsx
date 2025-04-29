@@ -1,12 +1,12 @@
 import CSS from 'csstype';
-import { useRecoilValue } from 'recoil';
+import { useAtomValue } from 'jotai';
 import { songsState, idolsState } from '../const/atoms';
 import { Brand } from '../types/types';
 import { brandColor } from '../utils/util';
 
 const Result = (): JSX.Element => {
-  const songs = useRecoilValue(songsState);
-  const idols = useRecoilValue(idolsState);
+  const songs = useAtomValue(songsState);
+  const idols = useAtomValue(idolsState);
   const tableBorderStyle: CSS.Properties = { borderBottom: 'solid thin black' };
   const itemRowStyle: CSS.Properties = { height: '30px' };
   const brandColStyle: CSS.Properties = {
