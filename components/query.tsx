@@ -1,12 +1,12 @@
 import axios from 'axios';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { idolsState, parametersState, songsState } from '../const/atoms';
 import { ENDPOINTS } from '../const/consts';
 import { Music, Idol } from '../types/types';
 
 export const SongQuery = (): JSX.Element => {
-  const parameters = useRecoilValue(parametersState);
-  const setSongs = useSetRecoilState(songsState);
+  const parameters = useAtomValue(parametersState);
+  const setSongs = useSetAtom(songsState);
   const query = async () => {
     try {
       const songRes = axios.post(ENDPOINTS.music, parameters);
@@ -31,8 +31,8 @@ export const SongQuery = (): JSX.Element => {
 };
 
 export const IdolQuery = (): JSX.Element => {
-  const parameters = useRecoilValue(parametersState);
-  const setIdols = useSetRecoilState(idolsState);
+  const parameters = useAtomValue(parametersState);
+  const setIdols = useSetAtom(idolsState);
   const query = async () => {
     try {
       const idolRes = axios.post(ENDPOINTS.idol, parameters);

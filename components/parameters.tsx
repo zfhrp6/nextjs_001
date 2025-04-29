@@ -1,12 +1,12 @@
 import CSS from 'csstype';
 import { ChangeEvent } from 'react';
 import { Tooltip } from 'react-tooltip';
-import { useRecoilState, useResetRecoilState } from 'recoil';
-import { idolsState, parametersState, songsState } from '../const/atoms';
+import { useAtom, useSetAtom } from 'jotai';
+import { defaultParametersState, idolsState, parametersState, songsState } from '../const/atoms';
 import { Brand, Strategy } from '../types/types';
 
 export const SelectStrategy = (): JSX.Element => {
-  const [parameters, setParameters] = useRecoilState(parametersState);
+  const [parameters, setParameters] = useAtom(parametersState);
   const isSelected = (strategy: Strategy) => parameters.strategy === strategy;
 
   const onChangeStrategy = (ev: ChangeEvent<HTMLInputElement>) => {
@@ -59,7 +59,7 @@ export const SelectStrategy = (): JSX.Element => {
 };
 
 export const SelectProduction = (brand: Brand, idx: number): JSX.Element => {
-  const [parameters, setParameters] = useRecoilState(parametersState);
+  const [parameters, setParameters] = useAtom(parametersState);
   const onChangeBrands = (ev: ChangeEvent<HTMLInputElement>) => {
     const v = ev.target.value as Brand;
     if (parameters.brands?.includes(v)) {
@@ -80,7 +80,7 @@ export const SelectProduction = (brand: Brand, idx: number): JSX.Element => {
 };
 
 export const ParameterBox = (): JSX.Element => {
-  const [parameters, setParameters] = useRecoilState(parametersState);
+  const [parameters, setParameters] = useAtom(parametersState);
   const isSelectedAll = parameters.brands?.length === Brand.length;
   const toggleAllSelection = () => {
     setParameters({
@@ -119,7 +119,7 @@ export const ParameterBox = (): JSX.Element => {
 };
 
 export const NumberParameters = (): JSX.Element => {
-  const [parameters, setParameters] = useRecoilState(parametersState);
+  const [parameters, setParameters] = useAtom(parametersState);
   const handler = (ev: ChangeEvent<HTMLInputElement>) => {
     try {
       let a = ev.target.valueAsNumber;
@@ -141,10 +141,14 @@ export const NumberParameters = (): JSX.Element => {
 };
 
 export const AllClear = (): JSX.Element => {
-  const resetParameters = useResetRecoilState(parametersState);
-  const resetSongs = useResetRecoilState(songsState);
-  const resetIdols = useResetRecoilState(idolsState);
-  const clear = () => { [resetParameters, resetIdols, resetSongs].forEach((f) => f()); };
+  const setParameters = useSetAtom(parametersState);
+  const setSongs = useSetAtom(songsState);
+  const setIdols = useSetAtom(idolsState);
+  const clear = () => {
+    setParameters(defaultParametersState);
+    setSongs([]);
+    setIdols([]);
+  };
   return (
     <button type='button' onClick={clear}>ぜんぶクリア</button>
   );
