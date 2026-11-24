@@ -2,10 +2,8 @@ name: test
 on:
   push:
     branches:
-      - master
-    paths: frontend/**
+      - main
   pull_request:
-    paths: frontend/**
 
 permissions:
   contents: read
@@ -18,8 +16,8 @@ jobs:
       - name: set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - run: npm ci
+          node-version-file: package.json
+      - run: npm ci --ignore-scripts
       - run: npm run lint
       - run: npm run build
 
